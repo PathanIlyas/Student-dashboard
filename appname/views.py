@@ -185,7 +185,7 @@ def courses(request):
     return render(request,'courses.html')
 
 def visiting(request):
-    students = Student.objects.filter(status='visiting').order_by('-visiting_at')
+    students = Student.objects.filter(status='visiting')
     total = students.count()
     return render(request, 'visiting.html', {
         'students': students,
