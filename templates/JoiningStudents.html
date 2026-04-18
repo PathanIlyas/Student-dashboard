@@ -15,213 +15,275 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
 <style>
-
+/* =========================================================
+   GLOBAL - PREMIUM UI
+========================================================= */
 body {
-background: linear-gradient(135deg,#f6f8fc,#eef2ff);
-font-family:"Segoe UI",sans-serif;
-margin:0;
+    background: #f4f7fe;
+    overflow-x: hidden;
+    font-family: "Poppins", sans-serif;
+    color: #2b3674;
+    margin: 0;
 }
 
-/* REMOVE DATATABLE SORT ARROWS */
+::-webkit-scrollbar { display: none; }
+* { -ms-overflow-style: none; scrollbar-width: none; }
+a { text-decoration: none !important; }
 
+/* REMOVE DATATABLE SORT ARROWS */
 table.dataTable thead .sorting:before,
 table.dataTable thead .sorting:after,
 table.dataTable thead .sorting_asc:before,
 table.dataTable thead .sorting_asc:after,
 table.dataTable thead .sorting_desc:before,
 table.dataTable thead .sorting_desc:after {
-display:none !important;
+    display:none !important;
 }
 
-/* SIDEBAR */
-
-.sidebar{
-position:fixed;
-top:0;
-left:0;
-width:240px;
-height:100vh;
-background:white;
-border-right:1px solid #eee;
-padding:22px;
-box-shadow:4px 0 20px rgba(0,0,0,0.03);
+/* =========================================================
+   SIDEBAR
+========================================================= */
+.sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 260px;
+    height: 100vh;
+    background: #ffffff;
+    padding: 25px 20px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 5px 0 20px rgba(0, 0, 0, 0.02);
+    transition: all 0.3s ease;
 }
 
-.sidebar img{
-max-width:130px;
-margin-bottom:20px;
+.sidebar img {
+    max-width: 140px;
+    margin-bottom: 25px;
+    border-radius: 12px;
 }
 
-.sidebar a{
-display:block;
-padding:10px 12px;
-border-radius:10px;
-color:#475569;
-text-decoration:none;
-font-weight:500;
-margin-bottom:6px;
-transition:0.25s;
+.sidebar a {
+    display: flex;
+    align-items: center;
+    padding: 14px 18px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    color: #a3aed1;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 15px;
 }
 
-.sidebar a:hover,
-.sidebar a.active{
-background:#eef2ff;
-color:#4f46e5;
+.sidebar a.active, .sidebar a:hover {
+    background: linear-gradient(135deg, #4318ff 0%, #868cff 100%);
+    color: #ffffff;
+    box-shadow: 0 10px 20px rgba(67, 24, 255, 0.2);
+    transform: translateX(4px);
 }
 
-/* MAIN */
-
-.main-content{
-margin-left:240px;
-padding:40px;
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+.main-content {
+    margin-left: 260px;
+    padding: 40px 30px;
 }
 
-/* HEADER */
-
-.header-card{
-background:linear-gradient(135deg,#e0f2fe,#ede9fe);
-padding:35px;
-border-radius:18px;
-margin-bottom:25px;
-box-shadow:0 8px 20px rgba(0,0,0,.05);
+/* =========================================================
+   HEADER & LEDGER CARDS
+========================================================= */
+.header-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 40px rgba(112, 144, 176, 0.08);
 }
 
-.header-card h2{
-font-weight:700;
-margin-bottom:6px;
+.header-card h2 {
+    font-weight: 700;
+    color: #2b3674;
+    font-size: 28px;
+    margin-bottom: 5px;
 }
 
-.header-card p{
-margin:0;
-color:#475569;
+.header-card p {
+    color: #a3aed1;
+    font-weight: 500;
+    font-size: 15px;
+    margin: 0;
 }
 
-/* LEDGER CARD */
-
-.ledger-card{
-background:white;
-border-radius:18px;
-padding:28px;
-box-shadow:0 12px 30px rgba(0,0,0,.06);
+.ledger-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 10px 40px rgba(112, 144, 176, 0.08);
 }
 
-/* TABLE */
-
-table{
-border-collapse:separate;
-border-spacing:0 10px;
+/* =========================================================
+   TABLE
+========================================================= */
+table {
+    border-collapse: collapse !important;
+    border-spacing: 0;
+    width: 100%;
 }
 
-thead th{
-font-size:12px;
-text-transform:uppercase;
-color:#94a3b8;
-border:none!important;
-font-weight:600;
+thead th {
+    border-bottom: 1px solid #e0e5f2 !important;
+    color: #a3aed1;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    padding: 15px 10px !important;
+    background: none !important;
 }
 
-tbody tr{
-background:white;
-box-shadow:0 4px 10px rgba(0,0,0,.04);
-border-radius:12px;
+tbody tr {
+    border-bottom: 1px solid #f4f7fe;
+    transition: 0.2s ease;
 }
 
-tbody td{
-border:none!important;
-padding:15px;
-vertical-align:middle;
+tbody tr:hover {
+    background: rgba(67, 24, 255, 0.02) !important;
 }
 
-tbody tr:hover{
-background:#f1f5ff;
-transition:.2s;
+tbody td {
+    padding: 16px 10px !important;
+    color: #2b3674;
+    font-weight: 500;
+    vertical-align: middle;
+    border: none !important;
 }
 
-/* AMOUNT */
+/* TEXT COLOR */
+.amount-paid { color: #05cd99; font-weight: 600; }
+.amount-remaining { color: #ee5d50; font-weight: 700; }
 
-.amount-paid{
-color:#16a34a;
-font-weight:600;
+/* =========================================================
+   BADGES (Pills)
+========================================================= */
+.status-badge {
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    display: inline-block;
 }
 
-.amount-remaining{
-color:#ef4444;
-font-weight:600;
+.badge-paid { background: rgba(5, 205, 153, 0.15); color: #05cd99; }
+.badge-pending { background: rgba(238, 93, 80, 0.15); color: #ee5d50; }
+.badge-partial { background: rgba(255, 181, 71, 0.15); color: #ffb547; }
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+.btn-view {
+    background: #f4f7fe;
+    color: #4318ff;
+    border-radius: 10px;
+    font-size: 13px;
+    border: none;
+    padding: 8px 12px;
+    transition: all 0.3s ease;
 }
 
-/* BADGES */
-
-.status-badge{
-padding:6px 14px;
-border-radius:20px;
-font-size:12px;
-font-weight:600;
+.btn-edit {
+    background: #f4f7fe;
+    color: #ffb547;
+    border-radius: 10px;
+    font-size: 13px;
+    border: none;
+    padding: 8px 12px;
+    transition: all 0.3s ease;
 }
 
-.badge-paid{
-background:#dcfce7;
-color:#166534;
+.btn-view:hover {
+    background: #4318ff; color: #fff; transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(67, 24, 255, 0.2);
 }
 
-.badge-pending{
-background:#fee2e2;
-color:#7f1d1d;
-}
-
-.badge-partial{
-background:#fef9c3;
-color:#854d0e;
-}
-
-/* BUTTONS */
-
-.btn-view{
-background:#dbeafe;
-color:#1e3a8a;
-border-radius:8px;
-font-size:13px;
-border:none;
-padding:6px 10px;
-}
-
-.btn-edit{
-background:#fde68a;
-color:#78350f;
-border-radius:8px;
-font-size:13px;
-border:none;
-padding:6px 10px;
-}
-
-.btn-view:hover{
-background:#bfdbfe;
-}
-
-.btn-edit:hover{
-background:#fcd34d;
+.btn-edit:hover {
+    background: #ffb547; color: #fff; transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(255, 181, 71, 0.2);
 }
 
 /* FILTER */
-
-#statusFilter{
-width:160px;
-font-size:13px;
-border-radius:8px;
+#statusFilter {
+    border-radius: 12px;
+    padding: 6px 12px;
+    border: 1px solid #e0e5f2;
+    background: #f4f7fe;
+    color: #2b3674;
+    font-weight: 600;
+    outline: none;
+    transition: 0.3s;
+    width: 140px;
 }
 
-/* DATATABLE BUTTON STYLE */
+#statusFilter:focus { border-color: #4318ff; background: #fff; }
 
-.dt-buttons button{
-background:#4f46e5 !important;
-color:white !important;
-border:none !important;
-padding:6px 12px !important;
-border-radius:6px !important;
-margin-right:5px !important;
+/* DATATABLES UTILITIES */
+.dt-buttons button {
+    background: #f4f7fe !important;
+    color: #4318ff !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 8px 16px !important;
+    margin-right: 8px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    transition: all .2s ease !important;
 }
 
-.dt-buttons button:hover{
-background:#4338ca !important;
+.dt-buttons button:hover {
+    background: #4318ff !important;
+    color: #fff !important;
+    box-shadow: 0 4px 15px rgba(67, 24, 255, 0.2) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    background: transparent !important;
+    border: none !important;
+    padding: 8px 16px !important;
+    margin: 0 4px;
+    color: #a3aed1 !important;
+    font-weight: 600;
+    border-radius: 10px !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: linear-gradient(135deg, #4318ff, #868cff) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(67, 24, 255, 0.3) !important;
+}
+
+.dataTables_wrapper .dataTables_info {
+    color: #a3aed1; font-size: 13px; font-weight: 500; padding-top: 20px;
+}
+
+.dataTables_filter input {
+    border-radius: 12px;
+    border: 1px solid #e0e5f2;
+    padding: 8px 16px;
+    background: #f4f7fe;
+    color: #2b3674;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+@media (max-width: 991px) {
+    .sidebar { left: -260px; }
+    .main-content { margin-left: 0; padding: 20px; }
+}
+
+@media (max-width: 768px) {
+    .sidebar { position: relative; width: 100%; height: auto; border-right: none; left: 0; }
+    .sidebar a { display: block; margin: 5px; }
 }
 
 </style>
@@ -273,7 +335,7 @@ background:#4338ca !important;
 <tr>
 
 <th>Name</th>
-<th>Email</th>
+<th>Join Date</th>
 <th>Phone</th>
 <th>Course</th>
 <th>Total</th>
@@ -305,9 +367,13 @@ background:#4338ca !important;
 
 <tr>
 
-<td><strong>{{ s.FNAME }} {{ s.LNAME }}</strong></td>
+<td>
+    <a href="{% url 'student_view' s.id %}" style="text-decoration: none; color: inherit; transition: color 0.2s ease;" onmouseover="this.style.color='#4318ff'" onmouseout="this.style.color='inherit'">
+        <strong>{{ s.FNAME }} {{ s.LNAME }}</strong>
+    </a>
+</td>
 
-<td>{{ s.EMAIL }}</td>
+<td>{{ s.joining_at|date:"d M Y"|default:"-" }}</td>
 
 <td>{{ s.PHONE }}</td>
 

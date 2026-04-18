@@ -10,182 +10,190 @@
 
     <style>
         body {
-            background: #f4f6f9;
+            background: #f4f7fe;
             margin: 0;
-            font-family: system-ui;
+            font-family: "Poppins", sans-serif;
+            color: #2b3674;
         }
 
-        /* SIDEBAR */
+        ::-webkit-scrollbar { display: none; }
+        * { -ms-overflow-style: none; scrollbar-width: none; }
+        a { text-decoration: none !important; }
 
+        /* ================= SIDEBAR ================= */
         .sidebar {
             position: fixed;
-            left: 0;
-            top: 0;
-            width: 240px;
+            top: 0; left: 0;
+            width: 260px;
             height: 100vh;
-            background: white;
-            border-right: 1px solid #e5e5e5;
-            padding: 20px;
-        }
-
-        .sidebar img {
-            width: 130px;
-            margin-bottom: 20px;
+            background: #ffffff;
+            padding: 25px 20px;
+            z-index: 1000;
+            box-shadow: 5px 0 20px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s ease;
         }
 
         .sidebar a {
-            display: block;
-            padding: 10px;
-            border-radius: 8px;
-            color: #333;
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            color: #a3aed1;
+            font-weight: 500;
             text-decoration: none;
-            margin-bottom: 5px;
+            transition: all 0.3s ease;
+            font-size: 15px;
         }
 
-        .sidebar a:hover,
-        .sidebar a.active {
-            background: #eef2ff;
-            color: #4f46e5;
+        .sidebar img {
+            max-width: 140px;
+            border-radius: 12px;
+            margin-bottom: 10px;
         }
 
+        .sidebar a.active,
+        .sidebar a:hover {
+            background: linear-gradient(135deg, #4318ff 0%, #868cff 100%);
+            color: #ffffff;
+            box-shadow: 0 10px 20px rgba(67, 24, 255, 0.2);
+            transform: translateX(4px);
+        }
 
-        /* MAIN */
-
+        /* ================= MAIN CONTENT ================= */
         .main {
-            margin-left: 240px;
-            padding: 35px;
+            margin-left: 260px;
+            padding: 40px;
         }
 
         .page-title {
-            font-size: 26px;
-            font-weight: 600;
+            font-size: 28px;
+            font-weight: 700;
+            color: #2b3674;
+            margin-bottom: 4px;
         }
 
         .page-sub {
-            color: #6c757d;
+            color: #a3aed1;
+            font-weight: 500;
             margin-bottom: 30px;
+            font-size: 15px;
         }
 
-
-        /* COURSE CARD */
-
+        /* ================= COURSE CARD ================= */
         .course-card {
-            background: white;
-            border-radius: 18px;
-            padding: 25px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(112, 144, 176, 0.08);
+            border: none;
             height: 100%;
-            transition: 0.25s;
-            border: 1px solid #f1f1f1;
+            transition: 0.3s ease;
         }
 
         .course-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(112, 144, 176, 0.15);
         }
 
-
         /* ICON */
-
         .icon {
             width: 60px;
             height: 60px;
-            border-radius: 14px;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 26px;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
 
-        .python {
-            background: #e7f0ff;
-            color: #2d6cdf;
-        }
-
-        .fullstack {
-            background: #e8fff4;
-            color: #18a36c;
-        }
-
-        .mern {
-            background: #fff3e6;
-            color: #ff7a00;
-        }
-
-        .ai {
-            background: #f4e9ff;
-            color: #7b3ff2;
-        }
-
-        .data {
-            background: #ffe8ef;
-            color: #ff3b6b;
-        }
-
-        .web {
-            background: #e8fbff;
-            color: #00a6c7;
-        }
-
+        .python { background: rgba(45, 108, 223, 0.1); color: #2d6cdf; }
+        .fullstack { background: rgba(24, 163, 108, 0.1); color: #18a36c; }
+        .mern { background: rgba(255, 122, 0, 0.1); color: #ff7a00; }
+        .ai { background: rgba(123, 63, 242, 0.1); color: #7b3ff2; }
+        .data { background: rgba(255, 59, 107, 0.1); color: #ff3b6b; }
+        .web { background: rgba(0, 166, 199, 0.1); color: #00a6c7; }
 
         /* TEXT */
-
         .course-title {
             font-size: 19px;
-            font-weight: 600;
-            margin-bottom: 5px;
+            font-weight: 700;
+            color: #2b3674;
+            margin-bottom: 8px;
         }
 
         .course-desc {
             font-size: 14px;
-            color: #6c757d;
-            margin-bottom: 15px;
+            color: #a3aed1;
+            font-weight: 500;
+            margin-bottom: 20px;
+            line-height: 1.5;
         }
-
 
         /* TAGS */
-
         .tag {
             font-size: 12px;
-            background: #f1f3f5;
-            padding: 5px 10px;
+            background: #f4f7fe;
+            color: #2b3674;
+            padding: 6px 12px;
             border-radius: 20px;
+            font-weight: 600;
             margin-right: 6px;
+            display: inline-block;
+            margin-bottom: 8px;
         }
 
-
         /* FOOTER */
-
         .meta {
             font-size: 13px;
-            color: #6c757d;
+            color: #a3aed1;
+            font-weight: 600;
             margin-top: 15px;
+            line-height: 1.6;
         }
 
         .btn-course {
-            margin-top: 15px;
-            border-radius: 10px;
-            padding: 6px 16px;
+            margin-top: 20px;
+            border-radius: 12px;
+            padding: 8px 16px;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            transition: all 0.2s ease;
         }
+
+        .btn-outline-primary { background: #f4f7fe; color: #4318ff; }
+        .btn-outline-primary:hover { background: #4318ff; color: #fff; box-shadow: 0 4px 15px rgba(67, 24, 255, 0.2); }
+        
+        .btn-outline-success { background: #f4f7fe; color: #18a36c; }
+        .btn-outline-success:hover { background: #18a36c; color: #fff; box-shadow: 0 4px 15px rgba(24, 163, 108, 0.2); }
+        
+        .btn-outline-warning { background: #f4f7fe; color: #ff7a00; border: none;}
+        .btn-outline-warning:hover { background: #ff7a00; color: #fff; box-shadow: 0 4px 15px rgba(255, 122, 0, 0.2); }
+        
+        .btn-outline-secondary { background: #f4f7fe; color: #7b3ff2; border: none;}
+        .btn-outline-secondary:hover { background: #7b3ff2; color: #fff; box-shadow: 0 4px 15px rgba(123, 63, 242, 0.2); }
+
+        .btn-outline-danger { background: #f4f7fe; color: #ff3b6b; border: none;}
+        .btn-outline-danger:hover { background: #ff3b6b; color: #fff; box-shadow: 0 4px 15px rgba(255, 59, 107, 0.2); }
+
+        .btn-outline-info { background: #f4f7fe; color: #00a6c7; border: none;}
+        .btn-outline-info:hover { background: #00a6c7; color: #fff; box-shadow: 0 4px 15px rgba(0, 166, 199, 0.2); }
 
 
         /* RESPONSIVE */
-
         @media(max-width:768px) {
-
             .sidebar {
                 position: relative;
                 width: 100%;
                 height: auto;
                 border-right: none;
-                border-bottom: 1px solid #eee;
             }
-
             .main {
                 margin-left: 0;
+                padding: 15px;
             }
-
         }
     </style>
 
@@ -216,17 +224,51 @@
 
     <div class="main">
 
-        <div class="page-title">IT Courses</div>
-        <div class="page-sub">Professional training programs for modern developers</div>
-
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <div class="page-title">IT Courses</div>
+                <div class="page-sub" style="margin-bottom:0;">Professional training programs for modern developers</div>
+            </div>
+            
+            <a href="/admin/appname/course/add/" class="btn" style="background: linear-gradient(135deg, #4318ff 0%, #868cff 100%); color: #ffffff; font-weight: 600; border-radius: 12px; padding: 10px 20px; box-shadow: 0 10px 20px rgba(67, 24, 255, 0.2); transition: all 0.3s ease;">
+                + Add Course
+            </a>
+        </div>
 
         <div class="row g-4">
 
+            <!-- DYNAMIC COURSES FROM ADMIN BACKEND -->
+            {% for course in courses %}
+            <div class="col-lg-4 col-md-6">
+                <div class="course-card">
+                    <div class="icon python">📚</div>
+                    <div class="course-title">{{ course.name }}</div>
+                    <div class="course-desc">
+                        Professional instruction and training program for {{ course.name }}.
+                    </div>
+                    <div>
+                        <span class="tag">Certification</span>
+                        <span class="tag">Career</span>
+                        <span class="tag">Tech</span>
+                    </div>
+                    <div class="meta">
+                        💰 Fees: ₹{{ course.fees }}<br>
+                        👨‍🎓 Available Now
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-primary btn-course w-100">
+                            View Curriculum
+                        </button>
+                        <a href="/admin/appname/course/{{ course.id }}/delete/" class="btn btn-outline-danger btn-course" title="Delete Course">
+                            Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
 
             <!-- Python -->
-
             <div class="col-lg-4 col-md-6">
-
                 <div class="course-card">
 
                     <div class="icon python">🐍</div>

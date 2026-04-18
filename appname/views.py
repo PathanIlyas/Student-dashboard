@@ -182,7 +182,8 @@ def students(request):
 
 
 def courses(request):
-    return render(request,'courses.html')
+    courses_data = Course.objects.all().order_by('-id')
+    return render(request, 'courses.html', {'courses': courses_data})
 
 def visiting(request):
     students = Student.objects.filter(status='visiting').order_by('-visiting_at')
@@ -194,7 +195,7 @@ def visiting(request):
 
 
 def JoiningStudents(request):
-    students = Student.objects.filter(status='adjoining')  # ✅ NO .values()
+    students = Student.objects.filter(status='adjoining').order_by('-id')
     total = students.count()
     return render(request, 'JoiningStudents.html', {
         'students': students,
@@ -307,10 +308,15 @@ def student_edit(request, id):
         installment = request.POST.get("installment")
         installment = int(installment) if installment else 0
 
+        payment_method = request.POST.get("payment_method")
+        if payment_method:
+            student.payment_method = payment_method
+
         if installment > 0:
             Installment.objects.create(
                 student=student,
-                amount=installment
+                amount=installment,
+                payment_method=payment_method
             )
 
             student.paid_fees = (student.paid_fees or 0) + installment

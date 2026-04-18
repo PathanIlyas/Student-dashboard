@@ -51,12 +51,14 @@ class Student(models.Model):
     total_fees = models.IntegerField(null=True, blank=True)
     paid_fees = models.IntegerField(default=0)
     remaining_fees = models.IntegerField(null=True, blank=True)
+    payment_method = models.CharField(max_length=50, null=True, blank=True)
 
 
 class Installment(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="installments")
     amount = models.IntegerField()
     payment_date = models.DateTimeField(auto_now_add=True)
+    payment_method = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
         return f"{self.student.FNAME} - {self.amount}"
