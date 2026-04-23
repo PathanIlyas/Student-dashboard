@@ -266,6 +266,131 @@
     </script>
     {% endif %}
 
+    <script>
+        const addressInput = document.querySelector('input[name="ADDRESS"]');
+        const cityInput = document.querySelector('input[name="CITY"]');
+        
+        // Setup autocomplete container
+        addressInput.parentNode.style.position = 'relative';
+        const suggestionsBox = document.createElement('div');
+        suggestionsBox.className = 'list-group position-absolute w-100 shadow-lg';
+        suggestionsBox.style.zIndex = '9999';
+        suggestionsBox.style.display = 'none';
+        suggestionsBox.style.maxHeight = '250px';
+        suggestionsBox.style.overflowY = 'auto';
+        addressInput.parentNode.appendChild(suggestionsBox);
+
+        let debounceTimer;
+
+        addressInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            const query = this.value;
+            
+            if (query.length < 2) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+
+            debounceTimer = setTimeout(() => {
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&countrycodes=in&limit=10&q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    suggestionsBox.innerHTML = '';
+                    if (data.length > 0) {
+                        suggestionsBox.style.display = 'block';
+                        data.forEach(item => {
+                            const btn = document.createElement('button');
+                            btn.type = 'button';
+                            btn.className = 'list-group-item list-group-item-action py-2';
+                            btn.style.fontSize = '13px';
+                            btn.textContent = item.display_name;
+                            
+                            btn.onclick = () => {
+                                const addr = item.address;
+                                const localArea = addr.neighbourhood || addr.suburb || addr.village || item.name;
+                                const cityName = addr.city || addr.town || addr.state_district || addr.county || '';
+                                
+                                addressInput.value = item.display_name;
+                                if (cityName) {
+                                    // if the local area is different from city, maybe they want it
+                                    cityInput.value = localArea !== cityName ? `${localArea}, ${cityName}` : cityName;
+                                } else {
+                                    cityInput.value = localArea;
+                                }
+                                suggestionsBox.style.display = 'none';
+                            };
+                            suggestionsBox.appendChild(btn);
+                        });
+                    } else {
+                        suggestionsBox.style.display = 'none';
+                    }
+                }).catch(err => console.log(err));
+            }, 600);
+        });
+
+        // --- CITY AUTOCOMPLETE ---
+        cityInput.parentNode.style.position = 'relative';
+        const citySuggestionsBox = document.createElement('div');
+        citySuggestionsBox.className = 'list-group position-absolute w-100 shadow-lg';
+        citySuggestionsBox.style.zIndex = '9999';
+        citySuggestionsBox.style.display = 'none';
+        citySuggestionsBox.style.maxHeight = '250px';
+        citySuggestionsBox.style.overflowY = 'auto';
+        cityInput.parentNode.appendChild(citySuggestionsBox);
+
+        let cityDebounceTimer;
+
+        cityInput.addEventListener('input', function() {
+            clearTimeout(cityDebounceTimer);
+            const query = this.value;
+            
+            if (query.length < 2) {
+                citySuggestionsBox.style.display = 'none';
+                return;
+            }
+
+            cityDebounceTimer = setTimeout(() => {
+                // Removed featuretype=city so it fetches all areas like Jamalpur, Khanpur, Riverfront
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&countrycodes=in&limit=10&q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    citySuggestionsBox.innerHTML = '';
+                    if (data.length > 0) {
+                        citySuggestionsBox.style.display = 'block';
+                        data.forEach(item => {
+                            const btn = document.createElement('button');
+                            btn.type = 'button';
+                            btn.className = 'list-group-item list-group-item-action py-2';
+                            btn.style.fontSize = '13px';
+                            
+                            btn.textContent = item.display_name;
+                            
+                            btn.onclick = () => {
+                                const addr = item.address;
+                                const localArea = addr.neighbourhood || addr.suburb || addr.village || item.name;
+                                const cityName = addr.city || addr.town || addr.state_district || addr.county || '';
+                                
+                                cityInput.value = localArea !== cityName && cityName ? `${localArea}, ${cityName}` : (cityName || localArea);
+                                citySuggestionsBox.style.display = 'none';
+                            };
+                            citySuggestionsBox.appendChild(btn);
+                        });
+                    } else {
+                        citySuggestionsBox.style.display = 'none';
+                    }
+                }).catch(err => console.log(err));
+            }, 600);
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target !== addressInput && e.target !== suggestionsBox) {
+                suggestionsBox.style.display = 'none';
+            }
+            if (e.target !== cityInput && e.target !== citySuggestionsBox) {
+                citySuggestionsBox.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 
 </html>

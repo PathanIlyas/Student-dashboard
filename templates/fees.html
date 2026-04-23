@@ -302,6 +302,22 @@
             font-size: 14px;
         }
 
+        /* BADGES & AMOUNTS */
+        .status-badge {
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            display: inline-block;
+        }
+        .badge-paid { background: rgba(5, 205, 153, 0.15); color: #05cd99; }
+        .badge-pending { background: rgba(238, 93, 80, 0.15); color: #ee5d50; }
+        .badge-partial { background: rgba(255, 181, 71, 0.15); color: #ffb547; }
+        .badge-overdue { background: rgba(220, 53, 69, 0.15); color: #dc3545; }
+        .amount-paid { color: #05cd99; font-weight: 600; }
+        .amount-remaining { color: #ee5d50; font-weight: 700; }
+
         .badge {
             padding: 8px 14px;
             border-radius: 20px;
@@ -395,8 +411,10 @@
 <body>
 
     <!-- SIDEBAR -->
-    <div class="sidebar text-center">
-        <img src="{% static 'images/logo.png' %}" alt="Way To Web">
+    <div class="sidebar text-center" id="sidebar">
+        <div class="sidebar-logo">
+            <img src="{% static 'images/logo.png' %}" alt="Way To Web">
+        </div>
         <hr>
         <a href="/dashboard/">Dashboard</a>
         <a href="/students/">Students</a>
@@ -512,6 +530,8 @@
                             <td>
                                 {% if s.remaining_fees == 0 %}
                                 <span class="badge bg-success">Paid</span>
+                                {% elif s.is_overdue %}
+                                <span class="badge bg-danger" style="background-color: #dc3545 !important;">Overdue</span>
                                 {% elif s.paid_fees > 0 %}
                                 <span class="badge bg-warning text-dark">Partial</span>
                                 {% else %}

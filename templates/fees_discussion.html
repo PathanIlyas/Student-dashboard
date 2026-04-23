@@ -103,6 +103,19 @@
                     <input type="number" name="paid_fees" class="form-control" placeholder="Enter paid amount">
                 </div>
 
+                <div class="mb-4">
+                    <label class="form-label">Payment Mode</label>
+                    <select name="payment_method" class="form-select">
+                        <option value="">Select Mode (if paid)</option>
+                        <option value="Online">Online</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Cheque">Cheque</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
                 <button type="submit" class="btn btn-confirm w-100">
                     Confirm & Move to Joining
                 </button>

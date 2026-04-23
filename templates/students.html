@@ -207,8 +207,10 @@
 <body>
 
     <!-- ================= SIDEBAR ================= -->
-   <div class="sidebar text-center">
-        <img src="{% static 'images/logo.png' %}" alt="Way To Web">
+   <div class="sidebar text-center" id="sidebar">
+        <div class="sidebar-logo">
+            <img src="{% static 'images/logo.png' %}" alt="Way To Web">
+        </div>
         <hr>
         <a href="/dashboard/">Dashboard</a>
         <a class="active" href="/students/">Students</a>
@@ -253,11 +255,10 @@
                         <tr>
                             <th>#</th>
                             <th>Student</th>
+                            <th>Mobile No</th>
+                            <th>Join Date</th>
                             <th>Status</th>
                             <th>Course</th>
-                            <th>Total Fees</th>
-                            <th>Paid</th>
-                            <th>Remaining</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -268,6 +269,20 @@
                             <td>
                                 <div class="name">{{ s.FNAME }} {{ s.LNAME }}</div>
                                 <div class="sub-text">{{ s.EMAIL }}</div>
+                            </td>
+
+                            <td>
+                                <div class="name">{{ s.PHONE }}</div>
+                            </td>
+
+                            <td>
+                                <div class="sub-text">
+                                    {% if s.joining_at %}
+                                        {{ s.joining_at|date:"d M Y" }}
+                                    {% else %}
+                                        {{ s.visiting_at|date:"d M Y" }}
+                                    {% endif %}
+                                </div>
                             </td>
 
                             <td>
@@ -283,9 +298,6 @@
                             </td>
 
                             <td>{{ s.course }}</td>
-                            <td>₹{{ s.total_fees }}</td>
-                            <td>₹{{ s.paid_fees }}</td>
-                            <td><strong>₹{{ s.remaining_fees }}</strong></td>
                         </tr>
                         {% endfor %}
                     </tbody>

@@ -129,18 +129,42 @@ def dashboard(request):
     if not request.user.is_superuser:
         return redirect("/")
 
-    students = Student.objects.all().order_by("-id")
+    # Filter only joined students for the dashboard
+    students = Student.objects.filter(status='adjoining').order_by("-id")
     total = students.count()
+    
+    from django.db.models import Sum
+    total_courses = Course.objects.count()
+    total_videos = total_courses * 15
+    total_earning = students.aggregate(total_paid=Sum('paid_fees'))['total_paid'] or 0
+
+    from collections import defaultdict
 
     # TECHNOLOGY DATA
-    technology_data = Student.objects.values("TECHNOLOGY").annotate(total=Count("TECHNOLOGY"))
-    tech_labels = [t["TECHNOLOGY"] for t in technology_data]
-    tech_counts = [t["total"] for t in technology_data]
+    raw_tech = students.values("TECHNOLOGY").annotate(total=Count("TECHNOLOGY"))
+    tech_dict = defaultdict(int)
+    for t in raw_tech:
+        name = t["TECHNOLOGY"].strip().title() if t["TECHNOLOGY"] else "Other"
+        if len(name) > 15:
+            name = name[:13] + '..'
+        tech_dict[name] += t["total"]
+        
+    tech_labels = list(tech_dict.keys())
+    tech_counts = list(tech_dict.values())
 
     # ✅ CITY DATA
-    city_data = Student.objects.values("CITY").annotate(total=Count("CITY"))
-    cities = [c["CITY"] for c in city_data]
-    city_counts = [c["total"] for c in city_data]
+    raw_city = students.values("CITY").annotate(total=Count("CITY"))
+    city_dict = defaultdict(int)
+    for c in raw_city:
+        name = c["CITY"].strip().title() if c["CITY"] else "Other"
+        if ',' in name:
+            name = name.split(',')[0].strip()
+        if len(name) > 12:
+            name = name[:10] + '..'
+        city_dict[name] += c["total"]
+        
+    cities = list(city_dict.keys())
+    city_counts = list(city_dict.values())
 
     # ✅ REGISTRATION GROWTH (last 7 days)
     today = datetime.today()
@@ -156,17 +180,26 @@ def dashboard(request):
 
     installments = Installment.objects.select_related('student').order_by('-payment_date')
 
+    # ✅ ADDED LAST 1 MONTH & 2 MONTHS LOGIC (NO CHANGE IN EXISTING)
+    today_date = timezone.now()
+    last_1_month_students = Student.objects.filter(visiting_at__gte=today_date - timedelta(days=30)).count()
+    last_2_months_students = Student.objects.filter(visiting_at__gte=today_date - timedelta(days=60)).count()
+
     return render(request, "dashboard.html", {
         "students": students,
         "total": total,
+        "total_courses": total_courses,
+        "total_videos": total_videos,
+        "total_earning": total_earning,
         "cities": cities,
         "city_counts": city_counts,
         "days": days,
         "counts": counts,
-        "counts": counts,
         "tech_labels": tech_labels,
         "tech_counts": tech_counts,
-        "installments": installments
+        "installments": installments,
+        "last_1_month_students": last_1_month_students,
+        "last_2_months_students": last_2_months_students
         
     })
 
@@ -252,6 +285,16 @@ def fees(request):
         labels.append(date.strftime("%b"))
         values.append(month_total)
 
+    today = timezone.now()
+    for s in students:
+        s.is_overdue = False
+        if s.remaining_fees and s.remaining_fees > 0:
+            first_inst = s.installments.order_by("payment_date").first()
+            if first_inst:
+                due_date = first_inst.payment_date + timedelta(days=10)
+                if today > due_date:
+                    s.is_overdue = True
+
     context = {
         'students': students,
         'total_students': total_students,
@@ -312,6 +355,11 @@ def student_edit(request, id):
         if payment_method:
             student.payment_method = payment_method
 
+        # Cap the installment so it doesn't exceed remaining fees
+        current_remaining = student.total_fees - (student.paid_fees or 0)
+        if installment > current_remaining:
+            installment = current_remaining
+
         if installment > 0:
             Installment.objects.create(
                 student=student,
@@ -324,23 +372,33 @@ def student_edit(request, id):
 
         student.save()
 
+        without_logo = bool(request.POST.get("without_logo"))
+
         # LETTER CHECKBOXES
         if request.POST.get("joining_letter"):
-            return generate_letter(student, "joining")
+            return generate_letter(student, "joining", without_logo)
 
         if request.POST.get("offer_letter"):
-            return generate_letter(student, "offer")
+            return generate_letter(student, "offer", without_logo)
 
         if request.POST.get("definition_letter"):
-            return generate_letter(student, "definition")
+            return generate_letter(student, "definition", without_logo)
 
         return redirect("student_edit", id=student.id)
 
     installments = student.installments.all().order_by("-payment_date")
 
+    next_due_date = None
+    if installments.exists() and student.remaining_fees and student.remaining_fees > 0:
+        from datetime import timedelta
+        first_inst = student.installments.order_by("payment_date").first()
+        if first_inst:
+            next_due_date = first_inst.payment_date + timedelta(days=10)
+
     return render(request, "student_edit.html", {
         "s": student,
-        "installments": installments
+        "installments": installments,
+        "next_due_date": next_due_date
     })
 
 
@@ -358,10 +416,14 @@ def fees_discussion(request, id):
 
         course_id = request.POST.get("course")
         paid = request.POST.get("paid_fees")
+        payment_method = request.POST.get("payment_method")
 
         course = Course.objects.get(id=course_id)
 
         paid = int(paid) if paid else 0
+
+        if paid > course.fees:
+            paid = course.fees
 
         student.course = course.name
         student.total_fees = course.fees
@@ -369,13 +431,17 @@ def fees_discussion(request, id):
         student.remaining_fees = course.fees - paid
         student.status = "adjoining"
         student.joining_at = timezone.now()
+        
+        if payment_method:
+            student.payment_method = payment_method
 
         student.save()
 
         if paid > 0:
             Installment.objects.create(
                 student=student,
-                amount=paid
+                amount=paid,
+                payment_method=payment_method
             )
 
         return redirect("JoiningStudents")
@@ -498,9 +564,12 @@ def generate_receipt(request, installment_id):
 
     buffer.seek(0)
 
-    return HttpResponse(buffer, content_type="application/pdf")
+    response = HttpResponse(buffer, content_type="application/pdf")
+    filename = f"Receipt_{student.FNAME}_{student.LNAME}.pdf"
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
 
-def generate_letter(student, letter_type):
+def generate_letter(student, letter_type, without_logo=False):
 
     buffer = io.BytesIO()
 
@@ -516,13 +585,14 @@ def generate_letter(student, letter_type):
     elements = []
     styles = getSampleStyleSheet()
 
-    logo_path = os.path.join("static/images/logo.png")
+    if not without_logo:
+        logo_path = os.path.join("static/images/logo.png")
 
-    try:
-        logo = Image(logo_path, width=140, height=60)
-        elements.append(logo)
-    except:
-        pass
+        try:
+            logo = Image(logo_path, width=140, height=60)
+            elements.append(logo)
+        except:
+            pass
 
     elements.append(Spacer(1,30))
 
@@ -565,18 +635,38 @@ def generate_letter(student, letter_type):
     elements.append(Spacer(1,30))
 
     elements.append(Paragraph(content, styles["Normal"]))
-    elements.append(Spacer(1,60))
+    elements.append(Spacer(1, 15))
+    elements.append(Paragraph(f"<b>Total Course Fees:</b> {student.total_fees} INR", styles["Normal"]))
+    elements.append(Paragraph(f"<b>Paid So Far:</b> {student.paid_fees} INR", styles["Normal"]))
+    elements.append(Paragraph(f"<b>Remaining Fees:</b> {student.remaining_fees} INR", styles["Normal"]))
 
-    elements.append(Paragraph(
-        "Authorized Signatory<br/>Way To Web",
-        styles["Normal"]
-    ))
+    if student.remaining_fees and student.remaining_fees > 0:
+        from datetime import timedelta
+        first_inst = student.installments.order_by("payment_date").first()
+        if first_inst:
+            due_date = first_inst.payment_date + timedelta(days=10)
+            elements.append(Paragraph(f"<b>Next Installment Due:</b> {due_date.strftime('%d %b %Y')}", styles["Normal"]))
+
+    elements.append(Spacer(1, 30))
+    if without_logo:
+        elements.append(Paragraph("_________________________<br/><br/><b>Authorized Signatory</b>", styles["Normal"]))
+        elements.append(Spacer(1, 40))
+        elements.append(Paragraph("_________________________<br/><br/><b>Company Stamp</b>", styles["Normal"]))
+    else:
+        elements.append(Paragraph("<b>Authorized Signatory</b>", styles["Normal"]))
+        elements.append(Paragraph(
+            "Way To Web",
+            styles["Normal"]
+        ))
 
     doc.build(elements)
 
     buffer.seek(0)
 
-    return HttpResponse(buffer, content_type="application/pdf")
+    response = HttpResponse(buffer, content_type="application/pdf")
+    filename = f"{letter_type.capitalize()}_Letter_{student.FNAME}_{student.LNAME}.pdf"
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
 
 
 from .models import FollowUp
