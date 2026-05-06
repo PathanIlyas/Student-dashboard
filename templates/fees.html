@@ -301,7 +301,7 @@
             box-shadow: 0 4px 10px rgba(67, 24, 255, 0.2);
             font-size: 14px;
         }
-
+y
         /* BADGES & AMOUNTS */
         .status-badge {
             padding: 8px 14px;
@@ -535,7 +535,7 @@
                                 {% elif s.paid_fees > 0 %}
                                 <span class="badge bg-warning text-dark">Partial</span>
                                 {% else %}
-                                <span class="badge bg-danger">Pending</span>
+                                <span class="badge bg-primary" style="background-color: rgba(67, 24, 255, 0.1) !important; color: #4318ff !important;">Pending</span>
                                 {% endif %}
                             </td>
                         </tr>
@@ -578,10 +578,10 @@
         new Chart(document.getElementById('feesChart'), {
             type: 'doughnut',
             data: {
-                labels: ['Paid', 'Partial', 'Pending'],
+                labels: ['Paid', 'Partial', 'Pending', 'Overdue'],
                 datasets: [{
-                    data: [{{ paid }}, {{ partial }},{{ pending }}],
-            backgroundColor: ['#198754', '#ffc107', '#dc3545']
+                    data: [{{ paid }}, {{ partial }}, {{ pending }}, {{ overdue }}],
+            backgroundColor: ['#05cd99', '#ffb547', '#4318ff', '#dc3545']
                 }]
             },
             options: { cutout: '65%' }

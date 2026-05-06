@@ -261,13 +261,9 @@ def fees(request):
 
     # ===== PAYMENT STATUS COUNT =====
     paid = students.filter(remaining_fees=0).count()
-
-    partial = students.filter(
-        paid_fees__gt=0,
-        remaining_fees__gt=0
-    ).count()
-
-    pending = students.filter(paid_fees=0).count()
+    partial = 0
+    pending = 0
+    overdue = 0
 
     # ===== MONTHLY COLLECTION (LAST 6 MONTHS) =====
     labels = []
@@ -294,6 +290,14 @@ def fees(request):
                 due_date = first_inst.payment_date + timedelta(days=10)
                 if today > due_date:
                     s.is_overdue = True
+        
+        if s.is_overdue:
+            overdue += 1
+        elif s.remaining_fees and s.remaining_fees > 0:
+            if s.paid_fees and s.paid_fees > 0:
+                partial += 1
+            else:
+                pending += 1
 
     context = {
         'students': students,
@@ -304,6 +308,7 @@ def fees(request):
         'paid': paid,
         'partial': partial,
         'pending': pending,
+        'overdue': overdue,
         'chart_labels': labels,
         'chart_values': values,
     }
