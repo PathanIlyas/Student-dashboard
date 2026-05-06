@@ -181,30 +181,35 @@
         .badge-pending { background: rgba(0, 181, 216, 0.15) !important; color: #00b5d8 !important; }
         .badge-rejected { background: rgba(238, 93, 80, 0.15) !important; color: #ee5d50 !important; }
 
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1200;
+            background: linear-gradient(135deg, #4318ff, #868cff);
+            color: #fff;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(67, 24, 255, 0.3);
+            cursor: pointer;
+        }
+
         /* ================= RESPONSIVE ================= */
-        @media (max-width: 768px) {
-            .sidebar {
-                position: relative;
-                width: 100%;
-                height: auto;
-                border-right: none;
-                padding: 15px;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 15px;
-            }
-
-            .table-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+        @media (max-width: 991px) {
+            .sidebar { left: -260px; }
+            .sidebar.show { left: 0; box-shadow: 20px 0 40px rgba(0, 0, 0, 0.1); }
+            .main-content { margin-left: 0; padding: 80px 20px 20px 20px; }
+            .mobile-toggle { display: block; }
+            .table-header { flex-direction: column; align-items: flex-start; gap: 10px; }
         }
     </style>
 </head>
 
 <body>
+    <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
 
     <!-- ================= SIDEBAR ================= -->
    <div class="sidebar text-center" id="sidebar">
@@ -379,6 +384,10 @@
             a.download = fileName;
             a.click();
             URL.revokeObjectURL(a.href);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('show');
         }
     </script>
 
